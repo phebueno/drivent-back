@@ -4,6 +4,12 @@ async function getTicketTypesDB() {
   return prisma.ticketType.findMany();
 }
 
-const ticketsRepository = { getTicketTypesDB };
+async function postTicketDB(enrollmentId: number, ticketTypeId: number) {
+  return prisma.ticket.create({
+    data: { ticketTypeId, enrollmentId, status: 'RESERVED', createdAt: new Date() },
+  });
+}
+
+const ticketsRepository = { getTicketTypesDB, postTicketDB };
 
 export default ticketsRepository;
