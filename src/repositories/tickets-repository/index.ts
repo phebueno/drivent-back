@@ -10,6 +10,23 @@ async function postTicketDB(enrollmentId: number, ticketTypeId: number) {
   });
 }
 
-const ticketsRepository = { getTicketTypesDB, postTicketDB };
+async function getTicketTypeByIdDB(ticketTypeId: number) {
+  return prisma.ticketType.findFirst({
+    where: {
+      id: ticketTypeId,
+    },
+  });
+}
+
+async function getUserTicketsDB(enrollmentId: number) {
+  return prisma.ticket.findMany({
+    include: { TicketType: true },
+    where: {
+      enrollmentId,
+    },
+  });
+}
+
+const ticketsRepository = { getTicketTypesDB, postTicketDB, getTicketTypeByIdDB, getUserTicketsDB };
 
 export default ticketsRepository;

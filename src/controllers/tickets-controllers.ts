@@ -10,12 +10,12 @@ export async function getTicketTypes(_req: AuthenticatedRequest, res: Response) 
 }
 
 export async function getUserTickets(req: AuthenticatedRequest, res: Response) {
-  const ticket = await ticketsService.getUserTickets();
-  res.send('retorna tickets');
+  const tickets = await ticketsService.getUserTickets(req.userId);
+  res.send(tickets);
 }
 
 export async function postUserTicket(req: AuthenticatedRequest, res: Response) {
   const { ticketTypeId } = req.body as Record<string, number>;
-  await ticketsService.postUserTicket(req.userId, ticketTypeId);
-  res.send('posta tickets');
+  const newTicketInfo = await ticketsService.postUserTicket(req.userId, ticketTypeId);
+  res.status(httpStatus.CREATED).send(newTicketInfo);
 }
