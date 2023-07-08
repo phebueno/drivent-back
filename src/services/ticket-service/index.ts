@@ -8,12 +8,15 @@ async function getTicketTypes(): Promise<TicketType[]> {
   return result;
 }
 
-async function getUserTickets(userId: number): Promise<Ticket> {
+async function getUserTickets(userId: number): Promise<UserTickets<Ticket>>{
     const { id } = await enrollmentsService.getOneWithAddressByUserId(userId); //Emite erro 404 se n houver enrollment
     const result = await ticketsRepository.getUserTicketsDB(id);
     if(result.length===0) throw notFoundError();
   return result[0];
 }
+
+type UserTickets <T> = Partial<T>
+   & { TicketType: TicketType }
 
 async function postUserTicket(userId: number, ticketTypeId: number) {
   const { id } = await enrollmentsService.getOneWithAddressByUserId(userId); //Emite erro 404 se n houver enrollment

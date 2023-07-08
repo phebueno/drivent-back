@@ -1,8 +1,7 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import ticketsService from '../services/ticket-service';
 import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '../middlewares';
-import { TicketTypeId } from '../schemas/tickets-schemas';
 
 export async function getTicketTypes(_req: AuthenticatedRequest, res: Response) {
   const ticketTypes = await ticketsService.getTicketTypes();
