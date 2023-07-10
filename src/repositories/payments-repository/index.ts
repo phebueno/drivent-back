@@ -13,6 +13,17 @@ async function postTicketPaymentDB(paymentInfo: PaymentModel) {
   });
 }
 
-const paymentsRepository = { getTicketPaymentDB, postTicketPaymentDB };
+async function updateTicketPaidStatusDB(id: number){
+  return prisma.ticket.update({
+    data:{
+      status: 'PAID'
+    },
+    where: {
+      id,
+    },
+  });
+}
+
+const paymentsRepository = { getTicketPaymentDB, postTicketPaymentDB, updateTicketPaidStatusDB };
 
 export default paymentsRepository;

@@ -27,6 +27,15 @@ async function getUserTicketsDB(enrollmentId: number) {
   });
 }
 
+async function getUserTicketWithUserIdDB(userId: number) {
+  return prisma.ticket.findFirst({
+    include: { TicketType: true },
+    where: {
+      Enrollment: { userId },
+    },
+  });
+}
+
 async function getTicketById(id: number) {
   return prisma.ticket.findFirst({
     where: {
@@ -51,6 +60,7 @@ const ticketsRepository = {
   getUserTicketsDB,
   getTicketById,
   getTicketByIdAndUserIdDB,
+  getUserTicketWithUserIdDB,
 };
 
 export default ticketsRepository;
