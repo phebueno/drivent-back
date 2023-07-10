@@ -15,7 +15,7 @@ async function getTicketPayment(ticketId: number, userId: number) {
 
 async function postTicketPayment(payment: CardPaymentInfo, userId: number) {
   const userTicket = await ticketsRepository.getUserTicketWithUserIdDB(userId);
-  if (userTicket.id !== payment.ticketId || !userTicket) await verifyTicketStatus(payment.ticketId);
+  if (!userTicket) await verifyTicketStatus(payment.ticketId);
   if (userTicket.status === 'RESERVED') {
     const paymentInfo = mountCardPaymentInfo(payment, userTicket.TicketType.price);
     const result = await paymentsRepository.postTicketPaymentDB(paymentInfo);
