@@ -4,8 +4,7 @@ import { CardPaymentInfo } from "../protocols";
 import { AuthenticatedRequest } from "../middlewares";
 
 export async function getTicketPayment(req: AuthenticatedRequest,res: Response){
-    const { ticketId } = req.query;
-    const paidTicket = await paymentsService.getTicketPayment();
+    const paidTicket = await paymentsService.getTicketPayment(Number(req.query.ticketId), req.userId);
     //verificar se ticket existe
     res.send(paidTicket);
 }

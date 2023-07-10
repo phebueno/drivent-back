@@ -3,22 +3,28 @@ import { CardPaymentInfo } from '../../protocols';
 import paymentsRepository from '../../repositories/payments-repository';
 import ticketsRepository from '../../repositories/tickets-repository';
 import { notFoundError, unauthorizedError } from '../../errors';
-import ticketsService from '../ticket-service';
+import ticketsService from '../tickets-service';
+import { invalidQueryError } from './errors';
 
-async function getTicketPayment() {
-  return paymentsRepository.getTicketPaymentDB();
+async function getTicketPayment(ticketId: number, userId: number) {
+  if(isNaN(ticketId)) throw invalidQueryError();
+  const result = await paymentsRepository.getTicketPaymentDB(ticketId, userId);
+  if(!result) await verifyTicketStatus(ticketId);
+  return result;
 }
 
 async function postTicketPayment(payment: CardPaymentInfo, userId: number) {
   const userTicket = await ticketsService.getUserTickets(userId);
-  if (userTicket.id !== payment.ticketId) {
-    const ticketExists = await ticketsRepository.getTicketById(payment.ticketId);
-    if (!ticketExists) throw notFoundError(); //não existe ticket
-    else throw unauthorizedError(); //ticket não é do usuário
-  }
+  if (userTicket.id !== payment.ticketId) await verifyTicketStatus(payment.ticketId);
   const paymentInfo = mountCardPaymentInfo(payment, userTicket.TicketType.price);
   const result = await paymentsRepository.postTicketPaymentDB(paymentInfo);
   return result;
+}
+
+async function verifyTicketStatus(ticketId: number){
+    const ticketExists = await ticketsRepository.getTicketById(ticketId);
+    if (!ticketExists) throw notFoundError(); //não existe ticket
+    else throw unauthorizedError(); //ticket não é do usuário  
 }
 
 function mountCardPaymentInfo(payment: CardPaymentInfo, value: number) {
